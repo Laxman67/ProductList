@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': __dirname + '/src',
+      '@': __dirname + '/src', // Ensure this alias points to the correct path
     },
   },
 });
