@@ -1,119 +1,133 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fakeBaseQuery } from "@reduxjs/toolkit/query";
-import axios from "axios";
-
-// https://dummyjson.com/products/category/{category}?select=id,title,price
-//https://dummyjson.com/products/categories
-
-/*
-=================================================
-
-// Define default parameters
-const limit = 10;  // Fetch 10 items per request
-const skip = 20;   // Skip 20 items (can change based on pagination)
-const searchTerm = 'phone';  // Search query term
-
-// Construct the URL dynamically
-const apiUrl = `https://dummyjson.com/products?limit=${limit}&skip=${skip}&search?q=${searchTerm}`;
-
-// Fetch data from the constructed URL
-const fetchProducts = async () => {
-  try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-    console.log(data);  // Handle the data received
-  } catch (error) {
-    console.error('Error fetching products:', error);
-  }
-};
-====================================CATEGORY LIS ================
-beauty, fragrances, furniture, groceries, home-decoration,
- kitchen-accessories, laptops, mens-shirts, mens-shoes, mens-watches,
-  mobile-accessories, motorcycle, skin-care, smartphones, sports-accessories, 
-  sunglasses, tablets, tops, vehicle, womens-bags
-
-*/
-
-const BACKEND_URL = `https://dummyjson.com/products`
+import { createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 const initialState = {
   loading: true,
   error: null,
   message: null,
   products: [],
-  categories: '',
-  page: 1,
+  skip: 0,
   limit: 10,
-  total: 0
+};
 
+const productSlice = createSlice({
+  name: 'product',
+  initialState,
+  reducers: {
+    getAllProductsRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    getAllProductsSuccess(state, action) {
+      state.loading = false;
+      state.products = action.payload;
+      state.error = null;
+    },
+    getAllProductsFailed(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    getPaginatedRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    getPaginatedSuccess(state, action) {
+      state.loading = false;
+      state.products = action.payload;
+      state.error = null;
+    },
+    getPaginatedFailed(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    getCategoryProductRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    getCategoryProductSuccess(state, action) {
+      state.loading = false;
+      state.products = action.payload;
+      state.error = null;
+    },
+    getCategoryProductFailed(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    updatePagination(state, action) {
+      state.skip = action.payload.skip;
+      state.limit = action.payload.limit;
+    },
+    clearAllErrors(state) {
+      state.error = null;
+    },
+  },
+});
 
-}
-const productSlice = createSlice(
-  {
-    name: 'product',
-    initialState,
-    reducers: {
-      getAllProductsRequest(state, action) {
-        state.loading = true;
-        state.error = null;
-        state.error = [];
-      },
-      getAllProductsSuccess(state, action) {
-        state.loading = false;
-        state.error = null;
-        state.products = action.payload
-
-      },
-      getAllProductsFailed(state, action) {
-        state.loading = false;
-        state.error = action.payload;
-
-      },
-      addCategoryRequest(state, action) {
-        this.error = null;
-        this.categories = null;
-        this.loading = true
-      },
-      addCategorySuccess(state, action) {
-        this.error = null;
-        this.categories = action.payload;
-        this.loading = false
-      },
-      addCategoryFailes(state, action) {
-        this.error = true;
-        this.loading = false
-      },
-      getCategoryRequest(state, action) { },
-      getCategorySuccess(state, action) { },
-      getCategoryFailes(state, action) { },
-      clearAllErrors(state) {
-        state.error = null
-      }
-
-    }
-
-  }
-)
-
-
+const { updatePagination } = productSlice.actions;
 
 export const getAllProducts = () => async (dispatch) => {
-
-  dispatch(productSlice.actions.getAllProductsRequest())
+  dispatch(productSlice.actions.getAllProductsRequest());
   try {
-    const { data } = await axios.get(`${BACKEND_URL}`)
-
-
-
-    dispatch(productSlice.actions.getAllProductsSuccess(data.products))
-    dispatch(productSlice.actions.clearAllErrors(data.products))
-
+    const { data } = await axios.get(
+      `https://dummyjson.com/products?limit=${initialState.limit}&skip=${initialState.skip}`
+    );
+    dispatch(productSlice.actions.getAllProductsSuccess(data.products));
   } catch (error) {
-    dispatch(productSlice.actions.getAllProductsSuccess(error.response.data.message))
+    dispatch(
+      productSlice.actions.getAllProductsFailed(error.response.data.message)
+    );
   }
+};
 
-}
+export const getPaginatedForwardData = () => async (dispatch, getState) => {
+  const { product } = getState();
+  dispatch(productSlice.actions.getPaginatedRequest());
+  try {
+    const newSkip = product.skip + product.limit; //0+10 = 10 // 10+10=20
+    dispatch(updatePagination({ skip: newSkip, limit: product.limit }));
+    const { data } = await axios.get(
+      `https://dummyjson.com/products?limit=${product.limit}&skip=${newSkip}`
+    );
+    dispatch(productSlice.actions.getPaginatedSuccess(data.products));
+  } catch (error) {
+    dispatch(
+      productSlice.actions.getPaginatedFailed(error.response.data.message)
+    );
+  }
+};
 
+export const getPaginatedBackData = () => async (dispatch, getState) => {
+  const { product } = getState();
+  dispatch(productSlice.actions.getPaginatedRequest());
+  try {
+    const newSkip = Math.max(product.skip - product.limit, 0);
+    dispatch(updatePagination({ skip: newSkip, limit: product.limit }));
+    const { data } = await axios.get(
+      `https://dummyjson.com/products?limit=${product.limit}&skip=${newSkip}`
+    );
+    dispatch(productSlice.actions.getPaginatedSuccess(data.products));
+  } catch (error) {
+    dispatch(
+      productSlice.actions.getPaginatedFailed(error.response.data.message)
+    );
+  }
+};
 
+export const getCategorisedProduct =
+  (category) => async (dispatch, getState) => {
+    const { product } = getState();
+    dispatch(productSlice.actions.getCategoryProductRequest());
+    try {
+      const { data } = await axios.get(
+        category
+          ? `https://dummyjson.com/products/category/${category}?limit=${product.limit}&skip=${product.skip}`
+          : `https://dummyjson.com/products?limit=${product.limit}&skip=${product.skip}`
+      );
 
-export default productSlice.reducer
+      dispatch(productSlice.actions.getCategoryProductSuccess(data.products));
+    } catch (error) {
+      dispatch(productSlice.actions.getCategoryProductFailed(error.response));
+    }
+  };
+
+export default productSlice.reducer;
