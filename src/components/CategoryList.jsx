@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCategories, setSelectedCategory } from '../store/actions';
+// import { fetchCategories, setSelectedCategory } from '../store/actions';
 
 const CategoryList = () => {
   const dispatch = useDispatch();
   const { categories, selectedCategory } = useSelector(state => state.products);
 
   useEffect(() => {
-    dispatch(fetchCategories());
+    // dispatch(fetchCategories());
   }, [dispatch]);
 
   const handleCategorySelect = (category) => {
-    dispatch(setSelectedCategory(category));
+    // dispatch(setSelectedCategory(category));
   };
 
   return (

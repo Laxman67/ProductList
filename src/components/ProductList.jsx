@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchProducts } from '../store/actions';
+// import { fetchProducts } from '../store/actions';
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -8,12 +8,12 @@ const ProductList = () => {
   const [skip, setSkip] = useState(0);
 
   useEffect(() => {
-    dispatch(fetchProducts(selectedCategory, searchQuery, 10, 0));
+    // dispatch(fetchProducts(selectedCategory, searchQuery, 10, 0));
     setSkip(10);
   }, [selectedCategory, searchQuery, dispatch]);
 
   const loadMoreProducts = () => {
-    dispatch(fetchProducts(selectedCategory, searchQuery, 10, skip));
+    // dispatch(fetchProducts(selectedCategory, searchQuery, 10, skip));
     setSkip(skip + 10);
   };
 

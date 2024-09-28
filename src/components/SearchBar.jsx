@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setSearchQuery } from '../store/actions';
+// import { useDispatch } from 'react-redux';
+// import { setSearchQuery } from '../store/actions';
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -8,7 +8,7 @@ const SearchBar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    dispatch(setSearchQuery(query));
+    // dispatch(setSearchQuery(query));
   };
 
   return (
