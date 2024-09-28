@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 const CategoryList = () => {
   const dispatch = useDispatch();
-  const { categories, selectedCategory } = useSelector(state => state.products);
+  // const { categories, selectedCategory } = useSelector(state => state.products);
 
   useEffect(() => {
     // dispatch(fetchCategories());

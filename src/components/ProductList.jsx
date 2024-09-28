@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 const ProductList = () => {
   const dispatch = useDispatch();
-  const { products, selectedCategory, searchQuery } = useSelector(state => state.products);
+  // const { products, selectedCategory, searchQuery } = useSelector(state => state.products);
   const [skip, setSkip] = useState(0);
 
   useEffect(() => {
