@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { fakeBaseQuery } from "@reduxjs/toolkit/query";
 import axios from "axios";
 
 // https://dummyjson.com/products/category/{category}?select=id,title,price
@@ -25,30 +26,94 @@ const fetchProducts = async () => {
     console.error('Error fetching products:', error);
   }
 };
-====================================================
+====================================CATEGORY LIS ================
+beauty, fragrances, furniture, groceries, home-decoration,
+ kitchen-accessories, laptops, mens-shirts, mens-shoes, mens-watches,
+  mobile-accessories, motorcycle, skin-care, smartphones, sports-accessories, 
+  sunglasses, tablets, tops, vehicle, womens-bags
+
 */
 
-const initialState={
-    loading,
-    error,
-    message,
-    products:[],
-    page:1,
-    limit:10,
-    total:0
-    
+const BACKEND_URL = `https://dummyjson.com/products`
+
+const initialState = {
+  loading: true,
+  error: null,
+  message: null,
+  products: [],
+  categories: '',
+  page: 1,
+  limit: 10,
+  total: 0
+
 
 }
 const productSlice = createSlice(
-    {
-        name: 'product',
-        initialState,
-        reducers:{
-    
-        }
-    
+  {
+    name: 'product',
+    initialState,
+    reducers: {
+      getAllProductsRequest(state, action) {
+        state.loading = true;
+        state.error = null;
+        state.error = [];
+      },
+      getAllProductsSuccess(state, action) {
+        state.loading = false;
+        state.error = null;
+        state.products = action.payload
+
+      },
+      getAllProductsFailed(state, action) {
+        state.loading = false;
+        state.error = action.payload;
+
+      },
+      addCategoryRequest(state, action) {
+        this.error = null;
+        this.categories = null;
+        this.loading = true
+      },
+      addCategorySuccess(state, action) {
+        this.error = null;
+        this.categories = action.payload;
+        this.loading = false
+      },
+      addCategoryFailes(state, action) {
+        this.error = true;
+        this.loading = false
+      },
+      getCategoryRequest(state, action) { },
+      getCategorySuccess(state, action) { },
+      getCategoryFailes(state, action) { },
+      clearAllErrors(state) {
+        state.error = null
+      }
+
     }
+
+  }
 )
+
+
+
+export const getAllProducts = () => async (dispatch) => {
+
+  dispatch(productSlice.actions.getAllProductsRequest())
+  try {
+    const { data } = await axios.get(`${BACKEND_URL}`)
+
+
+
+    dispatch(productSlice.actions.getAllProductsSuccess(data.products))
+    dispatch(productSlice.actions.clearAllErrors(data.products))
+
+  } catch (error) {
+    dispatch(productSlice.actions.getAllProductsSuccess(error.response.data.message))
+  }
+
+}
+
 
 
 export default productSlice.reducer
