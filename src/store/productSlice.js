@@ -73,9 +73,7 @@ export const getAllProducts = () => async (dispatch) => {
     );
     dispatch(productSlice.actions.getAllProductsSuccess(data.products));
   } catch (error) {
-    dispatch(
-      productSlice.actions.getAllProductsFailed(error.response.data.message)
-    );
+    dispatch(productSlice.actions.getAllProductsFailed(error.response));
   }
 };
 
@@ -90,9 +88,7 @@ export const getPaginatedForwardData = () => async (dispatch, getState) => {
     );
     dispatch(productSlice.actions.getPaginatedSuccess(data.products));
   } catch (error) {
-    dispatch(
-      productSlice.actions.getPaginatedFailed(error.response.data.message)
-    );
+    dispatch(productSlice.actions.getPaginatedFailed(error.response));
   }
 };
 
@@ -107,9 +103,22 @@ export const getPaginatedBackData = () => async (dispatch, getState) => {
     );
     dispatch(productSlice.actions.getPaginatedSuccess(data.products));
   } catch (error) {
-    dispatch(
-      productSlice.actions.getPaginatedFailed(error.response.data.message)
+    dispatch(productSlice.actions.getPaginatedFailed(error.response));
+  }
+};
+
+export const getProductName = (inputSearch) => async (dispatch, getState) => {
+  const { product } = getState();
+
+  if (inputSearch.trim()) {
+    const filteredProducts = product.products.filter((el) =>
+      el.title.toLowerCase().includes(inputSearch.toLowerCase())
     );
+
+    dispatch(productSlice.actions.getAllProductsSuccess(filteredProducts));
+  } else {
+    // Reset filtered products if inputSearch is empty
+    dispatch(productSlice.actions.getAllProductsSuccess(product.products));
   }
 };
 

@@ -1,6 +1,6 @@
 import { images } from '@/assets/images'; // Adjust path as needed
 import { getAllProducts, getCategorisedProduct } from '@/store/productSlice';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CategoryList = () => {
@@ -50,4 +50,4 @@ const CategoryList = () => {
   );
 };
 
-export default CategoryList;
+export default memo(CategoryList);
